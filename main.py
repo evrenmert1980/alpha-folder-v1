@@ -3,8 +3,8 @@ import subprocess
 import requests
 from google import genai
 
-TOKEN = os.getenv("MY_GITHUB_TOKEN")
-API_KEY = os.getenv("GEMINI_API_KEY")
+TOKEN = os.getenv("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")
+API_KEY = os.getenv("AIzaSyAPYw6TU-Rt9C09dS8gu0yGVCImL7zl5fI")
 
 def run():
     try:
