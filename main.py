@@ -1,40 +1,28 @@
-import os, requests, base64, subprocess
-from datetime import datetime, timedelta
-import google.generativeai as genai
+import os, subprocess, google.generativeai as genai
 
-GITHUB_TOKEN = os.getenv("MY_GITHUB_TOKEN")
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-REPO_NAME = "evrenmert1980/alpha-folder-v1"
+# Ayarlar
+TOKEN = os.getenv("MY_GITHUB_TOKEN")
+API_KEY = os.getenv("GEMINI_API_KEY")
 
-genai.configure(api_key=GEMINI_API_KEY)
-model = genai.GenerativeModel('gemini-1.5-flash')
-
-def run_alpha_engine():
-    last_week = (datetime.now() - timedelta(days=7)).strftime('%Y-%m-%d')
-    url = f"https://api.github.com/search/repositories?q=language:python created:>{last_week}&sort=stars&order=desc"
-    headers = {"Authorization": f"token {GITHUB_TOKEN}"}
+def run():
+    # Klasor yarat
+    if not os.path.exists("P_SOLUTIONS"):
+        os.makedirs("P_SOLUTIONS")
     
-    try:
-        repos = requests.get(url, headers=headers).json().get('items', [])[:1]
-        for repo in repos:
-            name = repo['name']
-            readme_url = f"https://api.github.com/repos/{repo['full_name']}/readme"
-            readme_res = requests.get(readme_url, headers=headers).json()
-            readme_text = base64.b64decode(readme_res['content']).decode('utf-8')
-            
-            response = model.generate_content(f"Ozetle: {readme_text[:1000]}")
-            
-            if not os.path.exists("P_SOLUTIONS"): os.makedirs("P_SOLUTIONS")
-            with open(f"P_SOLUTIONS/{name}_Analiz.txt", "w", encoding="utf-8") as f:
-                f.write(response.text)
-            
-            subprocess.run(["git", "config", "user.name", "AlphaBot"])
-            subprocess.run(["git", "config", "user.email", "bot@alpha.com"])
-            subprocess.run(["git", "add", "."])
-            subprocess.run(["git", "commit", "-m", f"Analiz: {name}"])
-            # KRIZ COZUCU SATIR:
-            subprocess.run(["git", "push", f"https://x-access-token:{GITHUB_TOKEN}@github.com/{REPO_NAME}.git", "HEAD:main"])
-            print(f"[SUCCESS] {name} yuklendi.")
-    except Exception as e: print(f"Hata: {e}")
+    # Test dosyasi olustur (Saat bilgisini ekleyelim ki degisiklik olsun)
+    import datetime
+    now = datetime.datetime.now().strftime("%H-%M-%S")
+    file_name = f"P_SOLUTIONS/test_{now}.txt"
+    
+    with open(file_name, "w") as f:
+        f.write(f"Otonom test basarili! Saat: {now}")
+    
+    # GitHub'a Gonder
+    subprocess.run(["git", "config", "user.name", "github-actions[bot]"])
+    subprocess.run(["git", "config", "user.email", "github-actions[bot]@users.noreply.github.com"])
+    subprocess.run(["git", "add", "."])
+    subprocess.run(["git", "commit", "-m", "Otonom dosya ekleme"])
+    subprocess.run(["git", "push"])
 
-if __name__ == "__main__": run_alpha_engine()
+if __name__ == "__main__":
+    run()
