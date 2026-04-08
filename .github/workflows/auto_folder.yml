@@ -1,27 +1,26 @@
 name: Alpha-Folder Otonom Dongu
 
 on:
-  workflow_dispatch: # Manuel tetikleme
+  workflow_dispatch:
 
 permissions:
-  contents: write # Dosya yazma izni acikca tanimlandi
+  contents: write
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - name: Depoyu Kopyala
-        uses: actions/checkout@v4 # En guncel surum
-        with:
-          token: ${{ secrets.MY_GITHUB_TOKEN }}
+        uses: actions/checkout@v4
 
       - name: Python Kur
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
+          python-version: '3.11' # Versiyon yükseltildi
 
-      - name: Bagimliliklari Yukle
-        run: pip install requests google-generativeai
+      - name: Yeni Kutuphaneleri Yukle
+        run: |
+          pip install requests google-genai # En güncel kütüphane
 
       - name: Makineyi Calistir
         env:
