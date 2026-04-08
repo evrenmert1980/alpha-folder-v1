@@ -1,7 +1,9 @@
 name: Alpha-Folder Otonom Dongu
 
 on:
-  workflow_dispatch:
+  workflow_dispatch: # Manuel tetikleme butonu
+  schedule:
+    - cron: '0 0 * * *' # Her gece 00:00'da otomatik calisir
 
 permissions:
   contents: write
@@ -16,11 +18,10 @@ jobs:
       - name: Python Kur
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11' # Versiyon yükseltildi
+          python-version: '3.11'
 
-      - name: Yeni Kutuphaneleri Yukle
-        run: |
-          pip install requests google-genai # En güncel kütüphane
+      - name: Gerekli Kutuphaneleri Yukle
+        run: pip install requests
 
       - name: Makineyi Calistir
         env:
